@@ -1,0 +1,10 @@
+DATABASE 美若
+
+DATABASE名：faker
+テーブル名：news
+問題番号：no
+真偽：singi
+スコア（得点）：score
+問題文：question_text
+一言解説：kaisetu_text
+ツイート主：tuinusi
