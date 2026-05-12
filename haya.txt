@@ -1,0 +1,16 @@
+CREATE DATABASE faker;
+use faker;
+
+CREATE TABLE news (
+    no INT PRIMARY KEY,               -- 問題番号
+    singi BOOLEAN NOT NULL,      -- 真偽（真：１　偽：０）
+    score INT NOT NULL,              -- スコア
+    question_text VARCHAR(255) NOT NULL,      -- 問題文
+    kaisetu_text VARCHAR(255) NOT NULL,          -- 一言解説（最大255文字程度）
+    tuinusi VARCHAR(50)            -- ツイート主（作成者や回答者など）
+);
+
+INSERT INTO news (no, singi, score, question_text, kaisetu_text, tuinusi)
+VALUES (1, 1, 600, '米空軍の極秘軍事施設にナルト走りで突入して宇宙人拝もうぜってイベント、参加表明が130万人超えてて草。アメリカ始まったなｗ', '宇宙人の噂がある軍事基地へ「ナルト走りなら銃弾を避けられる」とSNSで呼びかけた結果、数千人がガチで集結してお祭り騒ぎになりました', 'はんじょうさん');
+
+VALUES (1, 1, 10, 'ここに問題文を書きます', 'ここに解説を書きます', 'ユーザー名');
