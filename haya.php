@@ -1,7 +1,11 @@
 <?php
 // 接続情報（あなたの環境に合わせて書き換えてください）
+// エラーを表示させる設定
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 $host = '10.18.79.54'; // 先ほど確認したWindowsのIP
-$db   = 'faker_db';    // 作成したデータベース名
+$db   = 'faker';    // 作成したデータベース名
 $user = 'team_user';   // 作成したユーザー名
 $pass = '1234';        // 設定したパスワード
 $charset = 'utf8mb4';
@@ -17,7 +21,7 @@ $options = [
 try {
     // ここで接続実行！
     $pdo = new PDO($dsn, $user, $pass, $options);
-    echo "データベース接続成功！チーム開発の準備完了です。";
+    echo "にょっす！";
 } catch (\PDOException $e) {
     // 失敗したらエラーを表示
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
