@@ -1,4 +1,15 @@
-{
-  text-align:center;
-  padding:top 20px;
+.three{
+    text-align: center;
+   padding-top: 200px;
+
+}
+
+.five{
+    text-align: center;
+    margin: 20px;
+}
+
+.ten{
+    text-align: center;
+    margin: 20px;
 }
