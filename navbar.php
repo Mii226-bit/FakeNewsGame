@@ -1,7 +1,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<nav class="navbar navbar-expand-lg custom-navbar">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">  <
+div class="container-fluid">
 
     <a class="navbar-brand" href="#">MySite</a>
 
