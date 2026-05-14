@@ -35,7 +35,7 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
         }
         .news-card:hover {
             transform: scale(1.03); /* ホバー時に少し大きく */
-            filter: brightness(1.4);
+            filter: brightness(1.2);
         }
         .user-icon {
             width: 45px;
@@ -59,6 +59,7 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
             <?php 
                 // ランダムに枠線の色を選択
                 $random_border = $border_colors[array_rand($border_colors)]; 
+                $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
             ?>
             <div class="col">
                 <!-- クリックした時に詳細や判定へ飛ばす想定（例：judge.php?no=1） -->
@@ -69,18 +70,18 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
                             <div class="rounded-circle bg-info d-flex justify-content-center align-items-center user-icon me-3 shadow">
                                 <?php 
                                     // ツイ主の最初の1文字をアイコンとして表示
-                                    echo mb_substr($news['tuinusi'], 0, 1); 
+                                    echo mb_substr($display_name, 0, 1); 
                                 ?>
                             </div>
                             <div>
-                                <div class="fw-bold"><?php echo htmlspecialchars($news['tuinusi']); ?></div>
+                                <div class="fw-bold"><?php echo htmlspecialchars($display_name); ?></div>
                                 <small class="text-secondary">@news_faker</small>
                             </div>
                         </div>
 
                         <!-- ニュース内容 -->
                         <p class="card-text flex-grow-1" style="font-size: 1.1rem; line-height: 1.6;">
-                            <?php echo htmlspecialchars($news['question_text']); ?>
+                            <?php echo htmlspecialchars($news['mondai']); ?>
                         </p>
 
                         <!-- スコア表示 -->
@@ -88,7 +89,7 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
                             <span class="score-text">
                                 <?php 
                                     // 感情アイコンを適当に変えてみる例
-                                    $icons = ['❤️', '💚', '🧡'];
+                                    $icons = ['❤️'];
                                     echo $icons[array_rand($icons)];
                                 ?> 
                                 <?php echo number_format($news['score']); ?>
