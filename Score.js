@@ -7,7 +7,7 @@ const miniScoreBox = document.getElementById("miniScoreBox");
 const miniScoreValue = document.getElementById("miniScoreValue");
 
 /*
-    仮データ
+    ここの値はゲームの方の値を受け取るやつ
 */
 let currentScore = 1000;
 let changeValue = 100;
