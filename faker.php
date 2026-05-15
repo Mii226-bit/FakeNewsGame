@@ -33,6 +33,11 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
             transition: transform 0.2s;/*ふわっとするやつ*/
             text-decoration: none;
         }
+        .selected-card {
+            border-color: #ff0000 !important; /* ユーザー設定色（赤） */
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important; /* 外光エフェクト */
+            transform: scale(1.05); /* 少し強調 */
+        }
         .news-card:hover {
             transform: scale(1.03); /* ホバー時に少し大きく */
             filter: brightness(1.2);
@@ -47,6 +52,7 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
             font-size: 1.2rem;
             font-weight: bold;
         }
+
     </style>
 </head>
 <body>
@@ -56,11 +62,7 @@ $border_colors = ['border-danger', 'border-warning', 'border-success', 'border-i
     
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <?php foreach ($news_list as $news): ?>
-            <?php 
-                // ランダムに枠線の色を選択
-                $random_border = $border_colors[array_rand($border_colors)]; 
-                $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
-            ?>
+            <?php $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";?>
             <div class="col">
                 <!-- クリックした時に詳細や判定へ飛ばす想定（例：judge.php?no=1） -->
                 <a href="judge.php?no=<?php echo $news['no']; ?>" class="card h-100 news-card <?php echo $random_border; ?> shadow-sm">
