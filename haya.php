@@ -33,8 +33,8 @@
 
         /* ★選択された時の赤いボーダー */
         .selected-card {
-            border-color: #ff0000 !important;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6) !important;
+            border: 10px solid #e05c23 !important;
+            /* box-shadow: 0 0 15px rgba(255, 0, 0, 0.6) !important; */
         }
                 .news-card:hover {
             transform: scale(1.03); /* ホバー時に少し大きく */
@@ -48,8 +48,8 @@
                         font-size: 1.2rem;
                     }
                     
-                            .score-text {
-            font-size: 1.2rem;
+        .score-text {
+            font-size: 1.5rem;
             font-weight: bold;
         }
     </style>
@@ -84,8 +84,16 @@
                             <?php echo htmlspecialchars($news['mondai']); ?>
                         </p>
 
-                        <div class="text-end mt-3 border-top pt-2">
-                            <span class="fw-bold">❤️ <?php echo number_format($news['score']); ?></span>
+                        <!-- スコア表示 -->
+                        <div class="text-end mt-3 border-top pt-5">
+                            <span class="score-text">
+                                <?php 
+                                    // 感情アイコンを適当に変えてみる例
+                                    $icons = ['❤️'];
+                                    echo $icons[array_rand($icons)];
+                                ?> 
+                                <?php echo number_format($news['score']); ?>
+                            </span>
                         </div>
                     </div>
                 </div>
