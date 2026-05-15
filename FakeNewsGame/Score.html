@@ -1,0 +1,35 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Animation</title>
+    <link rel="stylesheet" href="Score.css">
+</head>
+<body>
+    <!-- 右上に常時表示する予定のスコア -->
+<div id="miniScoreBox">
+    <div class="miniLabel">フォロワー数</div>
+    <div id="miniScoreValue">1000</div>
+</div>
+    <!-- オーバーレイ -->
+    <div id="scoreOverlay" class="hidden">
+
+        <!-- 増減の計算結果をここに入れる -->
+        <div id="diffText" class="plus">100</div>
+
+        <!-- 大きく画面に出る方のスコア,ここと右上の数値が変だとおかしくはならんけど違和感 -->
+         
+        <div class="scoreBox">
+            <div class="label">フォロワー数</div>
+            <div id="scoreValue">1000</div>
+        </div>
+
+    </div>
+
+    <!--なんかぷろぐらむを後ろの白いとこに書くならここ-->
+
+    <script src="Score.js"></script>
+</body>
+</html>
