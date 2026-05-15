@@ -31,6 +31,17 @@
             color: white;
             transform: scale(1.08);
         }
+
+        .skip-button{
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+
+            width: 140px;
+            height: 80px;
+
+            font-size: 1rem;
+        }
     </style>
 </head>
 
@@ -54,6 +65,10 @@
         ソロ
     </label>
 
+    <input type="checkbox" class="btn-check" id="skip">
+    <label class="mode-card skip-button" for="skip">
+        説明を省く
+    </label>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
