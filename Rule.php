@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<!--なんか全体のデザイン-->
+<head>
+<meta charset="UTF-8">
+<title>Modal Sample</title>
+
+
+<style>
+
+body{
+    margin:0;
+    font-family:sans-serif;
+    
+}
+
+/* 背景暗転 */
+.overlay{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.6);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* 白い画面 */
+.modal{
+    position:relative;
+
+    width:80%;
+    height:70%;
+
+    background:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:50px;
+    font-weight:bold;
+}
+
+/* ×ボタン */
+.close{
+    position:absolute;
+
+    top:-20px;
+    right:-20px;
+
+    width:50px;
+    height:50px;
+
+    border-radius:50%;
+    border:none;
+
+    font-size:30px;
+    cursor:pointer;
+}
+
+/* 左右ボタン */
+.arrow{
+    position:absolute;
+
+    top:50%;
+    transform:translateY(-50%);
+
+    width:60px;
+    height:60px;
+
+    font-size:40px;
+
+    border:none;
+    background:none;
+
+    cursor:pointer;
+}
+
+.left{
+    left:-80px;
+}
+
+.right{
+    right:-80px;
+}
+
+/* 押せない状態 */
+.arrow:disabled{
+    opacity:0.3;
+    cursor:default;
+}
+
+</style>
+</head>
+<!--なんか全体のデザインここまで-->
+<!--ルールのやつ-->
+<body>
+
+<div class="overlay" id="overlay">
+
+    <div class="modal">
+
+        <button class="close" id="closeBtn">
+            ×
+        </button>
+
+        <button class="arrow left" id="leftBtn">
+            ◀
+        </button>
+
+        <div id="content">
+            1枚目
+        </div>
+
+        <button class="arrow right" id="rightBtn">
+            ▶
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const pages = [
+    "1枚目",
+    "2枚目",
+    "3枚目"
+];
+
+let currentPage = 0;
+
+const content = document.getElementById("content");
+
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+
+const overlay = document.getElementById("overlay");
+const closeBtn = document.getElementById("closeBtn");
+
+/* 画面更新 */
+function updatePage(){
+
+    content.textContent = pages[currentPage];
+
+    leftBtn.disabled = currentPage === 0;
+
+    rightBtn.disabled = currentPage === pages.length - 1;
+}
+
+/* 左 */
+leftBtn.addEventListener("click", ()=>{
+
+    if(currentPage > 0){
+
+        currentPage--;
+
+        updatePage();
+    }
+});
+
+/* 右 */
+rightBtn.addEventListener("click", ()=>{
+
+    if(currentPage < pages.length - 1){
+
+        currentPage++;
+
+        updatePage();
+    }
+});
+
+/* 閉じる */
+closeBtn.addEventListener("click", ()=>{
+
+    overlay.remove();
+});
+
+updatePage();
+
+</script>
+<!--ルールのやつここまで-->
+<!-- <h1>問題数選択</h1>
+  <button>3問</button>
+  <button>5問</button>
+  <button>7問</button> -->
+</body>
+</html>
