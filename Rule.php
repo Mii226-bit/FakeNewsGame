@@ -58,6 +58,7 @@ body{
 
     font-size:30px;
     cursor:pointer;
+    z-index: 100;
 }
 
 /* 左右ボタン */

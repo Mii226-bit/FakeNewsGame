@@ -1,19 +1,22 @@
+
 window.addEventListener("DOMContentLoaded", function () {
 
-    const overlay = document.getElementById("overlay");
+    // 保存した値を取得
     const skipExplain = localStorage.getItem("skipExplain");
 
-    console.log("skip:", skipExplain);
-    console.log("overlay:", overlay);
+    // モーダル取得
+    const overlay = document.getElementById("overlay");
 
-    if (!overlay) {
-        console.log("overlayなし");
-        return;
-    }
+    // overlayが無ければ終了
+    if (!overlay) return;
 
+    // skipExplain が true なら非表示
     if (skipExplain === "true") {
+
         overlay.style.display = "none";
+
     } else {
+
         overlay.style.display = "flex";
     }
 });
