@@ -73,7 +73,8 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
     <?php if (empty($news_list)): ?>
         <div class="alert alert-warning text-center shadow-sm py-4">
             <p class="mb-3 fw-bold">手札のデータが見つかりません。</p>
-            <a href="faker.php" class="btn btn-primary">最初から遊ぶ</a>
+            <a href="faker.php" class="btn btn-primary">次のゲームへ
+            </a>
         </div>
     <?php else: ?>
         <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -125,6 +126,7 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
                                 </div>
                             </div>
 
+
                             <div class="card-text flex-grow-1" style="font-size: 1.1rem; line-height: 1.6;">
                                 <div class="fw-bold mb-2 text-warning">
                                     【判定】<?php echo htmlspecialchars($news['singi']); ?>
@@ -148,7 +150,7 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
     <?php endif; ?>
 
     <div class="text-center mt-5">
-        <a href="faker.php" class="btn btn-primary btn-lg">次のゲームへ</a>
+        <a href="faker.php" class="btn btn-primary btn-lg">もう一度遊ぶ</a>
     </div>
 </div>
 
