@@ -13,10 +13,10 @@ window.addEventListener("DOMContentLoaded", function () {
     // skipExplain が true なら非表示
     if (skipExplain === "true") {
 
-        overlay.style.display = "none";
+        overlay.style.display = "none";//見せません～
 
     } else {
 
-        overlay.style.display = "flex";
+        overlay.style.display = "flex";//見せるよ！！
     }
 });
