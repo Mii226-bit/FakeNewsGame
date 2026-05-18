@@ -3,8 +3,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">  <
 div class="container-fluid">
 
-    <a class="navbar-brand" href="home.php">MySite</a>
 
+    <a class="navbar-brand" href="home.php">MySite</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -22,7 +22,6 @@ div class="container-fluid">
 
         <li class="nav-item">
           <a class="nav-link" href="review.php">📒見直し</a>
-        </li>
 
       </ul>
     </div>

@@ -5,6 +5,18 @@ DATABASE名：faker
 問題番号：no
 真偽：singi
 スコア（得点）：score
-問題文：question_text
-一言解説：kaisetu_text
+問題文：mondai
+一言解説：kaisetu
 ツイート主：tuinusi
+
+CREATE DATABASE faker;
+use faker;
+
+CREATE TABLE news (
+    no INT PRIMARY KEY,               -- 問題番号
+    singi BOOLEAN NOT NULL,      -- 真偽（真：１　偽：０）
+    score INT NOT NULL,              -- スコア
+    question_text VARCHAR(255) NOT NULL,      -- 問題文
+    kaisetu_text VARCHAR(255) NOT NULL,          -- 一言解説（最大255文字程度）
+    tuinusi VARCHAR(50)            -- ツイート主（作成者や回答者など）
+);
