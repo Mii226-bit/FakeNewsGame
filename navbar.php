@@ -13,15 +13,15 @@ div class="container-fluid">
       <ul class="navbar-nav ms-auto">
 
         <li class="nav-item">
-          <a class="nav-link" href="#">👑ランキング</a>
+          <a class="nav-link" href="ranking.php">👑ランキング</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">👤プロフィール</a>
+          <a class="nav-link" href="profile.php">👤プロフィール</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">📒見直し</a>
+          <a class="nav-link" href="review.php">📒見直し</a>
         </li>
 
       </ul>
