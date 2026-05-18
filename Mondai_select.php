@@ -41,7 +41,7 @@
                 <input type="radio" class="btn-check" name="select" id="q7" value="7">
                 <label class="btn btn-outline-primary" for="q7">7問</label>
 
-                <input type="radio" class="btn-check" name="select" id="endless" value="endless">
+                <input type="radio" class="btn-check" name="select" id="q8" value="endless">
                 <label class="btn btn-outline-primary" for="q8">エンドレス</label>
             </div>
         </div>
