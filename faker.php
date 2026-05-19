@@ -6,13 +6,11 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'db_config.php';
 require_once 'game_manager.php';
 
-if (isset($_GET['question_limit'])) {
-    init_game($_GET['question_limit']);
-}
+
 
 $rule = get_game_rule();
 // ★現在のフォロワー数を取得（なければ1万人で保護）
-$followers = isset($_SESSION['followers']) ? $_SESSION['followers'] : 10000;
+$followers = $_SESSION['followers'];
 
 $sql = "SELECT * FROM news ORDER BY RAND() LIMIT 6";
 $stmt = $pdo->query($sql);

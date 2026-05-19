@@ -167,10 +167,10 @@ $is_game_over = check_game_over();
                             </div>
 
                             <div class="card-text flex-grow-1" style="font-size: 1.1rem; line-height: 1.6;">
-                                <div class="fw-bold mb-2 text-warning">
-                                    【判定】<?php echo htmlspecialchars($news['singi']); ?>
+                                <div class="fw-bold mb-2  rounded small">
+                                    問題文：<?php echo htmlspecialchars($news['mondai']); ?>
                                 </div>
-                                <div class="text-light p-2 bg-dark rounded small" style="border: 1px solid #333;">
+                                <div class="text-light p-2 bg-dark " style="border: 1px solid #333;">
                                     <strong>解説:</strong><br>
                                     <?php echo nl2br(htmlspecialchars($news['kaisetu'])); ?>
                                 </div>
