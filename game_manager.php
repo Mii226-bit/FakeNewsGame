@@ -11,7 +11,7 @@ function init_game($limit) {
         'is_active' => true         // ゲームプレイ中フラグ
     ];
     // ★初期フォロワー数を1万人に設定
-    $_SESSION['followers'] = 10000; 
+    $_SESSION['followers'] = 5000; 
 }
 
 // ゲームルールを取得する関数

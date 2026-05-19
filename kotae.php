@@ -18,14 +18,12 @@ if (!isset($_SESSION['followers'])) {
 foreach ($news_list as $news) {
     // ユーザーがこのカードを選択していた場合のみフォロワー数が変動する
     if (in_array($news['no'], $selected_news)) {
-        $is_fake = ($news['singi'] == '偽物' || $news['singi'] == '嘘' || $news['singi'] == 1);
-        
-        if (!$is_fake) {
+        if ($news['singi']) {
             // 真（REAL）を選んでいたらフォロワー数上昇
             $_SESSION['followers'] += (int)$news['score'];
         } else {
             // 偽（FAKE）を選んでいたらフォロワー数下降
-            $_SESSION['followers'] -= (int)$news['score'];
+            $_SESSION['followers'] -= (int)$news['score'] * 2; // ★ペナルティを倍にしてよりシビアに
         }
     }
 }
@@ -127,8 +125,7 @@ $is_game_over = check_game_over();
                 <?php 
                     $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
 
-                    $is_fake = ($news['singi'] == '偽物' || $news['singi'] == '嘘' || $news['singi'] == 1);
-                    $result_border = $is_fake ? 'border-fake' : 'border-real';
+                    $result_border = $news['singi'] ? 'border-real' : 'border-fake';
 
                     $did_user_select = in_array($news['no'], $selected_news);
                     $select_class = $did_user_select ? 'user-selected' : 'user-not-selected';
@@ -137,14 +134,14 @@ $is_game_over = check_game_over();
                     $game_result = '';
                     if ($did_user_select) {
                         // 真（リアル）を選んでいたらWIN、偽（フェイク）を選んでいたらLOSE
-                        $game_result = !$is_fake ? 'WIN' : 'LOSE';
+                        $game_result = $news['singi'] ? 'WIN' : 'LOSE';
                     }
                 ?>
                 <div class="col">
                     <div class="card h-100 news-card <?php echo $result_border; ?> <?php echo $select_class; ?> shadow-sm">
                         
                         <?php if ($game_result === 'WIN'): ?>
-                            <div class="judgment-stamp text-success border-success">正解 (WIN)</div>
+                            <div class="judgment-stamp text-success border-success">正解</div>
                         <?php elseif ($game_result === 'LOSE'): ?>
                             <div class="judgment-stamp text-danger border-danger">不正解</div>
                         <?php endif; ?>
@@ -161,10 +158,10 @@ $is_game_over = check_game_over();
                                 </div>
                                 
                                 <div>
-                                    <?php if ($is_fake): ?>
-                                        <span class="badge bg-danger badge-singi">FAKE</span>
+                                    <?php if ($news['singi']): ?>
+                                        <span class="badge bg-success badge-singi">リアル</span>
                                     <?php else: ?>
-                                        <span class="badge bg-success badge-singi">REAL</span>
+                                        <span class="badge bg-danger badge-singi">フェイク</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
