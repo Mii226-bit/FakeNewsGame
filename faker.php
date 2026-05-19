@@ -4,22 +4,20 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 require_once 'db_config.php';
-require_once 'game_manager.php'; // ★ゲーム管理ファイルを読み込む
+require_once 'game_manager.php';
 
-// もし Mondai_select.php から問数が送られてきたら、ゲームを新規に初期化する
 if (isset($_GET['question_limit'])) {
     init_game($_GET['question_limit']);
 }
 
-// 現在のルールを取得
 $rule = get_game_rule();
+// ★現在のフォロワー数を取得（なければ1万人で保護）
+$followers = isset($_SESSION['followers']) ? $_SESSION['followers'] : 10000;
 
-// ランダムに6件のニュースを取得
 $sql = "SELECT * FROM news ORDER BY RAND() LIMIT 6";
 $stmt = $pdo->query($sql);
 $news_list = $stmt->fetchAll();
 
-// 今回配られた6枚のデータをセッションに保存しておく
 $_SESSION['current_hand'] = $news_list;
 ?>
 
@@ -31,7 +29,7 @@ $_SESSION['current_hand'] = $news_list;
     <title>Fake News Poker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #e9f1f7; }
+        body { background-color: #e9f1f7; position: relative; }
         .news-card {
             background-color: #000 !important;
             color: #fff;
@@ -41,8 +39,8 @@ $_SESSION['current_hand'] = $news_list;
             text-decoration: none;
         }
         .selected-card {
-            border-color: #ff0000 !important; /* ユーザー設定色（赤） */
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important; /* 外光エフェクト */
+            border-color: #ff0000 !important;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
             transform: scale(1.05) !important;
         }
         .news-card:hover {
@@ -51,12 +49,29 @@ $_SESSION['current_hand'] = $news_list;
         }
         .user-icon { width: 45px; height: 45px; font-weight: bold; font-size: 1.2rem; }
         .score-text { font-size: 1.2rem; font-weight: bold; }
+        /* ★右上フォロワー数表示用スタイル */
+        .follower-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
+<div class="follower-counter text-dark">
+    👥 フォロワー数: <span class="text-primary fs-5"><?php echo number_format($followers); ?></span> 人
+</div>
+
 <form action="kotae.php" method="POST" class="container py-5">
-    <h1 class="text-center mb-2 fw-bold">Fake News Poker</h1>
+    <h1 class="text-center mb-2 fw-bold">正しいニュースを選べ！</h1>
+    
     
     <p class="text-center text-secondary mb-5 fs-5">
         設定: <span class="text-dark fw-bold"><?php echo htmlspecialchars($rule['limit'] === 'endless' ? 'エンドレス' : $rule['limit'] . '問'); ?></span> 
@@ -65,9 +80,7 @@ $_SESSION['current_hand'] = $news_list;
     
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <?php foreach ($news_list as $news): ?>
-            <?php 
-                $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
-            ?>
+            <?php $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し"; ?>
             <div class="col">
                 <div class="card h-100 news-card shadow-sm" data-no="<?php echo $news['no']; ?>">
                     
@@ -90,7 +103,7 @@ $_SESSION['current_hand'] = $news_list;
 
                         <div class="text-end mt-3 border-top pt-2">
                             <span class="score-text">
-                                ❤️ <?php echo number_format($news['score']); ?>
+                                影響度: ❤️ <?php echo number_format($news['score']); ?>
                             </span>
                         </div>
                     </div>
@@ -108,12 +121,9 @@ $_SESSION['current_hand'] = $news_list;
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const cards = document.querySelectorAll('.news-card');
-
     cards.forEach(card => {
         card.addEventListener('click', () => {
             card.classList.toggle('selected-card');
-
-            // カードの内部にあるチェックボックスを反転させる
             const checkbox = card.querySelector('.news-checkbox');
             checkbox.checked = !checkbox.checked;
         });

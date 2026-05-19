@@ -3,21 +3,40 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once 'game_manager.php'; // ★ゲーム管理ファイルを読み込む
+require_once 'game_manager.php';
 
-// faker.php で配られた 6 枚の手札データをセッションから読み込む
 $news_list = isset($_SESSION['current_hand']) ? $_SESSION['current_hand'] : [];
-
-// faker.php から送信されてきた「ユーザーがクリックしたカードの no リスト」
 $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
-
-// 現在のルールを取得
 $rule = get_game_rule();
 
-// ★今回のラウンドが終了したのでカウントを1進める
+// ★【フォロワー数計算ロジック】
+// 答え合わせ画面が開いた段階で、今回選ばれたカードに基づくスコアの変動を計算する
+if (!isset($_SESSION['followers'])) {
+    $_SESSION['followers'] = 10000;
+}
+
+foreach ($news_list as $news) {
+    // ユーザーがこのカードを選択していた場合のみフォロワー数が変動する
+    if (in_array($news['no'], $selected_news)) {
+        $is_fake = ($news['singi'] == '偽物' || $news['singi'] == '嘘' || $news['singi'] == 1);
+        
+        if (!$is_fake) {
+            // 真（REAL）を選んでいたらフォロワー数上昇
+            $_SESSION['followers'] += (int)$news['score'];
+        } else {
+            // 偽（FAKE）を選んでいたらフォロワー数下降
+            $_SESSION['followers'] -= (int)$news['score'];
+        }
+    }
+}
+
+// 計算完了後のフォロワー数
+$followers = $_SESSION['followers'];
+
+// 今回のラウンド終了処理（カウントアップ）
 advance_round();
 
-// ★進めた結果、設定した問題数を超えたかどうかを判定
+// 進めた結果、上限に達したか、またはフォロワーが0以下になったかでゲームオーバー判定
 $is_game_over = check_game_over();
 ?>
 
@@ -29,12 +48,12 @@ $is_game_over = check_game_over();
     <title>答え合わせ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #e9f1f7; }
+        body { background-color: #e9f1f7; position: relative; }
         .news-card {
             background-color: #000 !important;
             color: #fff;
             border-width: 4px !important;
-            position: relative; /* 判定スタンプを絶対配置するため */
+            position: relative;
         }
         .border-fake {
             border-color: #dc3545 !important;
@@ -44,16 +63,11 @@ $is_game_over = check_game_over();
             border-color: #198754 !important;
             box-shadow: 0 0 15px rgba(25, 135, 84, 0.4) !important;
         }
-        
         .user-selected {
             transform: scale(1.02);
             z-index: 2;
         }
-        .user-not-selected {
-            opacity: 0.65;
-        }
 
-        /* 勝負の成否を表す大文字のスタンプエフェクト */
         .judgment-stamp {
             position: absolute;
             top: 50%;
@@ -68,7 +82,7 @@ $is_game_over = check_game_over();
             opacity: 0;
             z-index: 10;
             pointer-events: none;
-            animation: stamp-animation 0.4s ease-out forwards; /* ガツンとスタンプを押すアニメーション */
+            animation: stamp-animation 0.4s ease-out forwards;
         }
         @keyframes stamp-animation {
             to {
@@ -76,13 +90,28 @@ $is_game_over = check_game_over();
                 opacity: 0.85;
             }
         }
-
         .user-icon { width: 45px; height: 45px; font-weight: bold; font-size: 1.2rem; }
         .score-text { font-size: 1.2rem; font-weight: bold; }
         .badge-singi { font-size: 1rem; padding: 0.5em 0.8em; }
+        /* ★右上フォロワー数表示用スタイル */
+        .follower-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
+
+<div class="follower-counter text-dark">
+    👥 フォロワー数: <span class="text-primary fs-5"><?php echo number_format($followers); ?></span> 人
+</div>
 
 <div class="container py-5">
     <h1 class="text-center mb-5 fw-bold">答え合わせ</h1>
@@ -98,10 +127,17 @@ $is_game_over = check_game_over();
                 <?php 
                     $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
 
-        
+                    $is_fake = ($news['singi'] == '偽物' || $news['singi'] == '嘘' || $news['singi'] == 1);
+                    $result_border = $is_fake ? 'border-fake' : 'border-real';
+
+                    $did_user_select = in_array($news['no'], $selected_news);
+                    $select_class = $did_user_select ? 'user-selected' : 'user-not-selected';
+
+                    // ★「真を選べ！」ルールに基づいた勝敗判定に修正
                     $game_result = '';
                     if ($did_user_select) {
-                        $game_result = $is_fake ? 'WIN' : 'LOSE';
+                        // 真（リアル）を選んでいたらWIN、偽（フェイク）を選んでいたらLOSE
+                        $game_result = !$is_fake ? 'WIN' : 'LOSE';
                     }
                 ?>
                 <div class="col">
@@ -145,7 +181,7 @@ $is_game_over = check_game_over();
 
                             <div class="text-end mt-3 border-top pt-2">
                                 <span class="score-text">
-                                    ❤️ <?php echo number_format($news['score']); ?>
+                                    影響度: ❤️ <?php echo number_format($news['score']); ?>
                                 </span>
                             </div>
                         </div>
@@ -157,9 +193,14 @@ $is_game_over = check_game_over();
 
     <div class="text-center mt-5">
         <?php if ($is_game_over): ?>
-            <div class="alert alert-success d-inline-block p-4 shadow-sm">
-                <h4 class="fw-bold mb-3">🎉 全<?php echo htmlspecialchars($rule['limit']); ?>問、すべて終了しました！</h4>
-                <a href=".php" class="btn btn-success btn-lg px-5 fw-bold">もう一度最初から遊ぶ</a>
+            <div class="alert alert-danger d-inline-block p-4 shadow-sm">
+                <?php if ($followers <= 0): ?>
+                    <h4 class="fw-bold mb-3">💀 フォロワーが0人になりました。ゲームオーバーです...</h4>
+                <?php else: ?>
+                    <h4 class="fw-bold mb-3">🎉 全<?php echo htmlspecialchars($rule['limit']); ?>問、すべて終了しました！</h4>
+                    <h5>最終フォロワー数: <span class="text-primary fw-bold"><?php echo number_format($followers); ?></span> 人</h5>
+                <?php endif; ?>
+                <a href="Mondai_select.php" class="btn btn-danger btn-lg px-5 fw-bold mt-3">もう一度最初から遊ぶ</a>
             </div>
         <?php else: ?>
             <a href="faker.php" class="btn btn-primary btn-lg px-5 fw-bold shadow">次の問題へ進む</a>
