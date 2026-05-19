@@ -4,15 +4,20 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 require_once 'db_config.php';
-require_once 'game_manager.php'; // ★ゲーム管理ファイルを読み込む
 
-// もし Mondai_select.php から問数が送られてきたら、ゲームを新規に初期化する
+// ★修正ポイント1: 初回（Mondai_select.phpから来たとき）だけ問題数をセットする
 if (isset($_GET['question_limit'])) {
-    init_game($_GET['question_limit']);
+    $_SESSION['game_rule'] = [
+        'limit' => $_GET['question_limit'],
+        'current_round' => 1 // ここから1ラウンド目スタート
+    ];
+} elseif (!isset($_SESSION['game_rule'])) {
+    // 万が一セッションが空っぽで直接アクセスされた場合のデフォルト
+    $_SESSION['game_rule'] = [
+        'limit' => '3',
+        'current_round' => 1
+    ];
 }
-
-// 現在のルールを取得
-$rule = get_game_rule();
 
 // ランダムに6件のニュースを取得
 $sql = "SELECT * FROM news ORDER BY RAND() LIMIT 6";
@@ -21,6 +26,9 @@ $news_list = $stmt->fetchAll();
 
 // 今回配られた6枚のデータをセッションに保存しておく
 $_SESSION['current_hand'] = $news_list;
+
+// ★修正ポイント2: 枠線用のカラー配列（カード部分でランダムに割り当てるため）
+$border_colors = ['border-danger', 'border-warning', 'border-success', 'border-info', 'border-primary'];
 ?>
 
 <!DOCTYPE html>
@@ -41,8 +49,8 @@ $_SESSION['current_hand'] = $news_list;
             text-decoration: none;
         }
         .selected-card {
-            border-color: #ff0000 !important; /* ユーザー設定色（赤） */
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important; /* 外光エフェクト */
+            border-color: #ff0000 !important;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
             transform: scale(1.05) !important;
         }
         .news-card:hover {
@@ -57,19 +65,20 @@ $_SESSION['current_hand'] = $news_list;
 
 <form action="kotae.php" method="POST" class="container py-5">
     <h1 class="text-center mb-2 fw-bold">Fake News Poker</h1>
-    
-    <p class="text-center text-secondary mb-5 fs-5">
-        設定: <span class="text-dark fw-bold"><?php echo htmlspecialchars($rule['limit'] === 'endless' ? 'エンドレス' : $rule['limit'] . '問'); ?></span> 
-        （現在 <span class="badge bg-primary fs-6"><?php echo htmlspecialchars($rule['current_round']); ?></span> 問目）
+    <p class="text-center text-secondary mb-5">
+        設定: <?php echo htmlspecialchars($_SESSION['game_rule']['limit']); ?>問ゲーム 
+        (現在 <?php echo htmlspecialchars($_SESSION['game_rule']['current_round']); ?> 問目)
     </p>
     
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <?php foreach ($news_list as $news): ?>
             <?php 
                 $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
+                // ★修正ポイント3: ループの中でランダムに枠線色を決定
+                $random_border = $border_colors[array_rand($border_colors)];
             ?>
             <div class="col">
-                <div class="card h-100 news-card shadow-sm" data-no="<?php echo $news['no']; ?>">
+                <div class="card h-100 news-card <?php echo $random_border; ?> shadow-sm" data-no="<?php echo $news['no']; ?>">
                     
                     <input type="checkbox" name="selected_news[]" value="<?php echo $news['no']; ?>" class="d-none news-checkbox">
 
@@ -100,7 +109,7 @@ $_SESSION['current_hand'] = $news_list;
     </div>
 
     <div class="text-center mt-5">
-        <button type="submit" class="btn btn-primary btn-lg px-5 shadow">すべての答え合わせ</button>
+        <button type="submit" class="btn btn-primary btn-lg">すべての答え合わせ</button>
     </div>
 </form>
 
@@ -121,4 +130,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
-</html>
+</html>Hello LAMP!
+

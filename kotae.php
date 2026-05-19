@@ -3,11 +3,22 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once 'game_manager.php'; // ★ゲーム管理ファイルを読み込む
+
 // faker.php で配られた 6 枚の手札データをセッションから読み込む
 $news_list = isset($_SESSION['current_hand']) ? $_SESSION['current_hand'] : [];
 
 // faker.php から送信されてきた「ユーザーがクリックしたカードの no リスト」
 $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
+
+// 現在のルールを取得
+$rule = get_game_rule();
+
+// ★今回のラウンドが終了したのでカウントを1進める
+advance_round();
+
+// ★進めた結果、設定した問題数を超えたかどうかを判定
+$is_game_over = check_game_over();
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +45,13 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
             box-shadow: 0 0 15px rgba(25, 135, 84, 0.4) !important;
         }
         
-
+        .user-selected {
+            transform: scale(1.02);
+            z-index: 2;
+        }
+        .user-not-selected {
+            opacity: 0.65;
+        }
 
         /* 勝負の成否を表す大文字のスタンプエフェクト */
         .judgment-stamp {
@@ -73,8 +90,7 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
     <?php if (empty($news_list)): ?>
         <div class="alert alert-warning text-center shadow-sm py-4">
             <p class="mb-3 fw-bold">手札のデータが見つかりません。</p>
-            <a href="faker.php" class="btn btn-primary">次のゲームへ
-            </a>
+            <a href="Mondai_select.php" class="btn btn-primary">最初から遊ぶ</a>
         </div>
     <?php else: ?>
         <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -82,16 +98,7 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
                 <?php 
                     $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
 
-                    // 1. そのニュース自体の正体（真偽）判定
-                    $is_fake = ($news['singi'] == '偽物' || $news['singi'] == '嘘' || $news['singi'] == 1);
-                    $result_border = $is_fake ? 'border-fake' : 'border-real';
-
-                    // 2. ユーザーがこのカードを「クリックして選んでいたか」の判定
-                    $did_user_select = in_array($news['no'], $selected_news);
-                    $select_class = $did_user_select ? 'user-selected' : 'user-not-selected';
-
-                    // 3. ゲームとしての勝敗判定（「フェイクを見抜くゲーム」と仮定した場合のロジック）
-                    // 選んだカードがフェイクなら正解(WIN)、選んだカードがリアルならお手付き(LOSE)
+        
                     $game_result = '';
                     if ($did_user_select) {
                         $game_result = $is_fake ? 'WIN' : 'LOSE';
@@ -126,7 +133,6 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
                                 </div>
                             </div>
 
-
                             <div class="card-text flex-grow-1" style="font-size: 1.1rem; line-height: 1.6;">
                                 <div class="fw-bold mb-2 text-warning">
                                     【判定】<?php echo htmlspecialchars($news['singi']); ?>
@@ -150,7 +156,14 @@ $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
     <?php endif; ?>
 
     <div class="text-center mt-5">
-        <a href="faker.php" class="btn btn-primary btn-lg">もう一度遊ぶ</a>
+        <?php if ($is_game_over): ?>
+            <div class="alert alert-success d-inline-block p-4 shadow-sm">
+                <h4 class="fw-bold mb-3">🎉 全<?php echo htmlspecialchars($rule['limit']); ?>問、すべて終了しました！</h4>
+                <a href=".php" class="btn btn-success btn-lg px-5 fw-bold">もう一度最初から遊ぶ</a>
+            </div>
+        <?php else: ?>
+            <a href="faker.php" class="btn btn-primary btn-lg px-5 fw-bold shadow">次の問題へ進む</a>
+        <?php endif; ?>
     </div>
 </div>
 
