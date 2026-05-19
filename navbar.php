@@ -3,8 +3,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">  <
 div class="container-fluid">
 
-    <a class="navbar-brand" href="#">MySite</a>
 
+    <a class="navbar-brand" href="home.php">MySite</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -13,16 +13,15 @@ div class="container-fluid">
       <ul class="navbar-nav ms-auto">
 
         <li class="nav-item">
-          <a class="nav-link" href="#">👑ランキング</a>
+          <a class="nav-link" href="ranking.php">👑ランキング</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">👤プロフィール</a>
+          <a class="nav-link" href="profile.php">👤プロフィール</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">📒見直し</a>
-        </li>
+          <a class="nav-link" href="review.php">📒見直し</a>
 
       </ul>
     </div>

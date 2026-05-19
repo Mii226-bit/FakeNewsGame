@@ -1,0 +1,84 @@
+body{
+    margin:0;
+    font-family:sans-serif;
+    
+}
+
+/* 背景暗転 */
+.overlay{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.6);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* 白い画面 */
+.modal{
+    position:relative;
+
+    width:80%;
+    height:70%;
+
+    background:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:50px;
+    font-weight:bold;
+}
+
+/* ×ボタン */
+.close{
+    position:absolute;
+
+    top:-20px;
+    right:-20px;
+
+    width:50px;
+    height:50px;
+
+    border-radius:50%;
+    border:none;
+
+    font-size:30px;
+    cursor:pointer;
+    z-index: 100;
+}
+
+/* 左右ボタン */
+.arrow{
+    position:absolute;
+
+    top:50%;
+    transform:translateY(-50%);
+
+    width:60px;
+    height:60px;
+
+    font-size:40px;
+
+    border:none;
+    background:none;
+
+    cursor:pointer;
+}
+
+.left{
+    left:-80px;
+}
+
+.right{
+    right:-80px;
+}
+
+/* 押せない状態 */
+.arrow:disabled{
+    opacity:0.3;
+    cursor:default;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Roulette Effect</title>
+    <link rel="stylesheet" href="Roulette.css">
+</head>
+<body>
+
+    <!-- 元の画面 -->
+    <div class="main-content">
+        <h1>元のゲーム画面</h1>
+        <p>この上に演出が重なります。</p>
+    </div>
+
+    <!-- 演出レイヤー -->
+    <div id="overlay">
+
+        <!-- 背景 -->
+        <img id="bgImage" src="images/party4.png">
+
+        <!-- 追加演出画像 -->
+        <img id="introImage" src="images/enjou.png">
+
+        <!-- 透過できたらここにクラッカーいれる -->
+        <video id="introVideo" src="videos/intro.mp4"></video>
+
+
+
+        <!-- スポットライト -->
+        <img id="lightImage" src="images/spot.png">
+
+        <!-- 中央ライト -->
+        <div id="centerLight"></div>
+
+        <!-- ルーレット -->
+         <div id="rouletteWrapper"></div>
+        <div id="rouletteContainer">
+
+            <div id="roulette"></div>
+            <img id="rouletteFrame" src="images/wakugumi2.png">
+
+        </div>
+        <!-- ボタン -->
+        <button id="spinButton">
+            START
+        </button>
+        </div>
+
+        
+
+    </div>
+
+    <script src="Roulette.js"></script>
+
+</body>
+</html>
