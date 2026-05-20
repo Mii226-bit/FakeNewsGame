@@ -7,27 +7,37 @@ const miniScoreBox = document.getElementById("miniScoreBox");
 const miniScoreValue = document.getElementById("miniScoreValue");
 
 /*
-    ここの値はゲームの方の値を受け取るやつ
+    ページ読み込み時にデータ属性から値を取得してアニメーション開始
 */
-let currentScore = 100;
-let changeValue = 10;
+function initScoreAnimation() {
+    if (!overlay) return;
 
-// true = プラス
-// false = マイナス
-// ここで増減どっちかの処理してるからなんかfalseゲームの時はここで引数の受け渡しをしそう
-const isPlus = false;
+    const followerAfter = parseInt(overlay.dataset.followerAfter) || 0;
+    const followerChange = parseInt(overlay.dataset.followerChange) || 0;
+    const isPositive = overlay.dataset.isPositive === 'true';
 
+    if (followerChange === 0) {
+        // 変動がない場合はアニメーション不実行
+        overlay.style.display = "none";
+        return;
+    }
 
-/*
-    演出開始
-*/
-startScoreAnimation(currentScore, changeValue, isPlus);
+    startScoreAnimation(followerAfter - followerChange, followerChange, isPositive);
+}
+
+// ページ読み込み完了後にアニメーション開始
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScoreAnimation);
+} else {
+    initScoreAnimation();
+}
 
 async function startScoreAnimation(score, diff, plus){
-// 右上スコアを消す
-miniScoreBox.classList.add("hide");
+    // 右上スコアを消す
+    miniScoreBox.classList.add("hide");
+
     // 初期値セット
-    scoreValue.textContent = score;
+    scoreValue.textContent = numberFormat(score);
 
     // 増減表示設定
     diffText.textContent = plus ? `+${diff}` : `-${diff}`;
@@ -68,7 +78,7 @@ miniScoreBox.classList.add("hide");
     await wait(2000);
 
     // 最終スコアを右上へ反映
-miniScoreValue.textContent = target;
+    miniScoreValue.textContent = `${target}人`;
 
     // フェードアウト
     overlay.classList.remove("show");
@@ -80,7 +90,7 @@ miniScoreValue.textContent = target;
     overlay.style.display = "none";
 
     // 右上スコアを戻す
-miniScoreBox.classList.remove("hide");
+    miniScoreBox.classList.remove("hide");
 }
 
 
@@ -105,16 +115,20 @@ function animateNumber(start, end, duration){
                 start + (end - start) * eased
             );
 
-        scoreValue.textContent = current;
+        scoreValue.textContent = numberFormat(current);
 
         if(progress < 1){
             requestAnimationFrame(update);
         }else{
-            scoreValue.textContent = end;
+            scoreValue.textContent = numberFormat(end);
         }
     }
 
     requestAnimationFrame(update);
+}
+
+function numberFormat(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 

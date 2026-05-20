@@ -15,6 +15,9 @@ if (!isset($_SESSION['followers'])) {
     $_SESSION['followers'] = 10000;
 }
 
+// フォロワー数の変動前の値を保存
+$followers_before = $_SESSION['followers'];
+
 foreach ($news_list as $news) {
     // ユーザーがこのカードを選択していた場合のみフォロワー数が変動する
     if (in_array($news['no'], $selected_news)) {
@@ -30,6 +33,10 @@ foreach ($news_list as $news) {
 
 // 計算完了後のフォロワー数
 $followers = $_SESSION['followers'];
+
+// フォロワー数の変動値を計算
+$follower_change = $followers - $followers_before;
+$is_positive_change = $follower_change >= 0;
 
 // 今回のラウンド終了処理（カウントアップ）
 advance_round();
@@ -113,19 +120,18 @@ $is_game_over = check_game_over();
 </div> -->
 <div id="miniScoreBox">
     <div class="miniLabel">👥フォロワー数</div>
-    <div id="miniScoreValue"><?php echo number_format($followers); ?>人</div>
+    <div id="miniScoreValue"><?php echo number_format($followers_before); ?>人</div>
 </div>
 <!-- オーバーレイ -->
-<div id="scoreOverlay" class="hidden">
+<div id="scoreOverlay" class="hidden" data-follower-before="<?php echo $followers_before; ?>" data-follower-after="<?php echo $followers; ?>" data-follower-change="<?php echo abs($follower_change); ?>" data-is-positive="<?php echo $is_positive_change ? 'true' : 'false'; ?>">
 
     <!-- 増減の計算結果をここに入れる -->
-    <div id="diffText" class="plus">200</div>
+    <div id="diffText" class="<?php echo $is_positive_change ? 'plus' : 'minus'; ?>"><?php echo ($is_positive_change ? '+' : '-') . abs($follower_change); ?></div>
 
-    <!-- 大きく画面に出る方のスコア,ここと右上の数値が変だとおかしくはならんけど違和感 -->
-        
+    <!-- 大きく画面に出る方のスコア -->
     <div class="scoreBox">
         <div class="label">フォロワー数</div>
-        <div id="scoreValue"><?php echo number_format($followers); ?>人</div>
+        <div id="scoreValue"><?php echo number_format($followers_before); ?>人</div>
     </div>
 
 </div>
