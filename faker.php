@@ -7,9 +7,17 @@ require_once 'db_config.php';
 require_once 'game_manager.php';
 
 
+if (isset($_GET['question_limit'])) {
+    // ラジオボタンで選ばれた値（3, 5, 7, endless）を取得して初期化
+    $limit = $_GET['question_limit'];
+    init_game($limit);
+} elseif (!isset($_SESSION['game_rule']) || !isset($_SESSION['followers'])) {
+    // 直接アクセスされた場合の安全装置（デフォルト3問）
+    init_game('3');
+}
 
 $rule = get_game_rule();
-// ★現在のフォロワー数を取得（なければ1万人で保護）
+// 現在のフォロワー数を取得
 $followers = $_SESSION['followers'];
 
 $sql = "SELECT * FROM news ORDER BY RAND() LIMIT 6";
@@ -18,7 +26,6 @@ $news_list = $stmt->fetchAll();
 
 $_SESSION['current_hand'] = $news_list;
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
