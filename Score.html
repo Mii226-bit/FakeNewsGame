@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,12 +8,15 @@
 </head>
 <body>
     <!-- 右上に常時表示する予定のスコア -->
+     <!-- ここの値もゲームの方の値を受け取るやつ -->
 <div id="miniScoreBox">
     <div class="miniLabel">フォロワー数</div>
     <div id="miniScoreValue">1000</div>
 </div>
     <!-- オーバーレイ -->
     <div id="scoreOverlay" class="hidden">
+
+         <div id="skipLayer"></div>
 
         <!-- 増減の計算結果をここに入れる -->
         <div id="diffText" class="plus">100</div>
