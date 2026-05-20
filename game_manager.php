@@ -24,7 +24,7 @@ function get_game_rule() {
 
 // 次のラウンドに進むためのカウントアップ関数
 function advance_round() {
-    if (isset($_SESSION['game_rule']) && $_SESSION['game_rule']['limit'] !== 'endless') {
+    if (isset($_SESSION['game_rule']) ) {
         $_SESSION['game_rule']['current_round']++;
     }
 }

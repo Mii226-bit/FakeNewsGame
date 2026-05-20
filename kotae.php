@@ -5,27 +5,51 @@ if (session_status() == PHP_SESSION_NONE) {
 
 require_once 'game_manager.php';
 
+// ==========================================
+// ★ 炎上ルーレットの設定（後から調整可能）
+// ==========================================
+$enjo_penalties = [
+    'chinka'    => 1000,  // 鎮火: 固定でマイナスするフォロワー数
+    'enjo'      => 3000,  // 炎上: 固定でマイナスするフォロワー数
+    'dai_enjo'  => 8000   // 大炎上: 固定でマイナスするフォロワー数
+];
+
 $news_list = isset($_SESSION['current_hand']) ? $_SESSION['current_hand'] : [];
 $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
 $rule = get_game_rule();
 
 // ★【フォロワー数計算ロジック】
-// 答え合わせ画面が開いた段階で、今回選ばれたカードに基づくスコアの変動を計算する
 if (!isset($_SESSION['followers'])) {
     $_SESSION['followers'] = 10000;
 }
 
+$has_dropped = false; // 今回のラウンドでフォロワーが減少したかどうかのフラグ
+
 foreach ($news_list as $news) {
-    // ユーザーがこのカードを選択していた場合のみフォロワー数が変動する
     if (in_array($news['no'], $selected_news)) {
         if ($news['singi']) {
             // 真（REAL）を選んでいたらフォロワー数上昇
             $_SESSION['followers'] += (int)$news['score'];
         } else {
             // 偽（FAKE）を選んでいたらフォロワー数下降
-            $_SESSION['followers'] -= (int)$news['score'] * 2; // ★ペナルティを倍にしてよりシビアに
+            $_SESSION['followers'] -= (int)$news['score'] * 2; // ペナルティを倍にしてよりシビアに
+            $has_dropped = true; // フォロワー減少を検知
         }
     }
+}
+
+// ★【炎上ルーレットロジック】
+// スコアがマイナス（フォロワー減少）が発生した場合のみルーレットが回る
+$roulette_result = null;
+$roulette_penalty = 0;
+
+if ($has_dropped) {
+    $types = ['chinka', 'enjo', 'dai_enjo'];
+    $roulette_result = $types[array_rand($types)]; // ランダムで1つ選択
+    
+    // 設定された数値を適用
+    $roulette_penalty = $enjo_penalties[$roulette_result];
+    $_SESSION['followers'] -= $roulette_penalty;
 }
 
 // 計算完了後のフォロワー数
@@ -34,7 +58,7 @@ $followers = $_SESSION['followers'];
 // 今回のラウンド終了処理（カウントアップ）
 advance_round();
 
-// 進めた結果、上限に達したか、またはフォロワーが0以下になったかでゲームオーバー判定
+// ゲームオーバー判定
 $is_game_over = check_game_over();
 ?>
 
@@ -91,7 +115,6 @@ $is_game_over = check_game_over();
         .user-icon { width: 45px; height: 45px; font-weight: bold; font-size: 1.2rem; }
         .score-text { font-size: 1.2rem; font-weight: bold; }
         .badge-singi { font-size: 1rem; padding: 0.5em 0.8em; }
-        /* ★右上フォロワー数表示用スタイル */
         .follower-counter {
             position: absolute;
             top: 20px;
@@ -102,6 +125,23 @@ $is_game_over = check_game_over();
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             font-weight: bold;
             z-index: 1000;
+        }
+
+        /* ★炎上通知カード用の追加CSS */
+        .enjo-card {
+            border: 3px solid;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+        .enjo-card-chinka { border-color: #0dcaf0; box-shadow: 0 0 15px rgba(13, 202, 240, 0.3); }
+        .enjo-card-enjo { border-color: #ffc107; box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); }
+        .enjo-card-dai_enjo { border-color: #dc3545; box-shadow: 0 0 25px rgba(220, 53, 69, 0.6); animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.01); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -114,6 +154,49 @@ $is_game_over = check_game_over();
 <div class="container py-5">
     <h1 class="text-center mb-5 fw-bold">答え合わせ</h1>
     
+    <!-- ★ 炎上ルーレットの結果UIセクション -->
+    <?php if ($roulette_result !== null): ?>
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8 col-lg-6">
+                
+                <?php if ($roulette_result === 'chinka'): ?>
+                    <!-- 【鎮火】のUI -->
+                    <div class="enjo-card enjo-card-chinka p-4 text-center">
+                        <div class="display-4 mb-2">🧯</div>
+                        <h3 class="fw-bold text-info mb-2">炎上ルーレット：鎮火</h3>
+                        <p class="text-secondary mb-3">デマの拡散に気づき、ボヤのうちに即座に消し止めた！<br>ネットの批判を最小限に抑え込みました。</p>
+                        <div class="badge bg-info fs-6 px-3 py-2 rounded-pill">
+                            フォロワー減少: -<?php echo number_format($roulette_penalty); ?> 人
+                        </div>
+                    </div>
+                    
+                <?php elseif ($roulette_result === 'enjo'): ?>
+                    <!-- 【炎上】のUI -->
+                    <div class="enjo-card enjo-card-enjo p-4 text-center">
+                        <div class="display-4 mb-2">🔥</div>
+                        <h3 class="fw-bold text-warning mb-2" style="color: #d39e00 !important;">炎上ルーレット：通常炎上</h3>
+                        <p class="text-secondary mb-3">リプライ欄に批判が殺到中！<br>「ファクトチェックしろ」と叩かれ、アカウントの信用が削られています。</p>
+                        <div class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill">
+                            フォロワー減少: -<?php echo number_format($roulette_penalty); ?> 人
+                        </div>
+                    </div>
+                    
+                <?php elseif ($roulette_result === 'dai_enjo'): ?>
+                    <!-- 【大炎上】のUI -->
+                    <div class="enjo-card enjo-card-dai_enjo p-4 text-center bg-danger-subtle">
+                        <div class="display-4 mb-2">🌋</div>
+                        <h3 class="fw-bold text-danger mb-2">炎上ルーレット：大炎上</h3>
+                        <p class="text-danger-emphasis mb-3 fw-bold">トレンド1位にランクイン！まとめサイトの餌食にされました。<br>世界中に醜態が拡散され、フォロー解除の嵐が止まりません！</p>
+                        <div class="badge bg-danger fs-5 px-4 py-2 rounded-pill shadow-sm">
+                            フォロワー大激減: -<?php echo number_format($roulette_penalty); ?> 人
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+        </div>
+    <?php endif; ?>
+    
     <?php if (empty($news_list)): ?>
         <div class="alert alert-warning text-center shadow-sm py-4">
             <p class="mb-3 fw-bold">手札のデータが見つかりません。</p>
@@ -124,16 +207,12 @@ $is_game_over = check_game_over();
             <?php foreach ($news_list as $news): ?>
                 <?php 
                     $display_name = !empty($news['tuinusi']) ? $news['tuinusi'] : "風吹けば名無し";
-
                     $result_border = $news['singi'] ? 'border-real' : 'border-fake';
-
                     $did_user_select = in_array($news['no'], $selected_news);
                     $select_class = $did_user_select ? 'user-selected' : 'user-not-selected';
 
-                    // ★「真を選べ！」ルールに基づいた勝敗判定に修正
                     $game_result = '';
                     if ($did_user_select) {
-                        // 真（リアル）を選んでいたらWIN、偽（フェイク）を選んでいたらLOSE
                         $game_result = $news['singi'] ? 'WIN' : 'LOSE';
                     }
                 ?>

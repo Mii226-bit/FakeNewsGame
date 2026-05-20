@@ -34,10 +34,10 @@
 
             <form action="faker.php" method="GET" class="container-box">
                 
-                <input type="radio" class="btn-check" name="question_limit" id="q3" value="3" checked>
+                <input type="radio" class="btn-check" name="question_limit" id="q3" value="3">
                 <label class="btn btn-outline-primary fs-5" for="q3">3問</label>
 
-                <input type="radio" class="btn-check" name="question_limit" id="q5" value="5">
+                <input type="radio" class="btn-check" name="question_limit" id="q5" value="5" checked>
                 <label class="btn btn-outline-primary fs-5" for="q5">5問</label>
 
                 <input type="radio" class="btn-check" name="question_limit" id="q7" value="7">
