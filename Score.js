@@ -9,8 +9,8 @@ const miniScoreValue = document.getElementById("miniScoreValue");
 /*
     ここの値はゲームの方の値を受け取るやつ
 */
-let currentScore = 1000;
-let changeValue = 100;
+let currentScore = 100;
+let changeValue = 10;
 
 // true = プラス
 // false = マイナス

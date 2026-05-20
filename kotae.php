@@ -45,6 +45,7 @@ $is_game_over = check_game_over();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>答え合わせ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="Score.css">
     <style>
         body { background-color: #e9f1f7; position: relative; }
         .news-card {
@@ -92,7 +93,7 @@ $is_game_over = check_game_over();
         .score-text { font-size: 1.2rem; font-weight: bold; }
         .badge-singi { font-size: 1rem; padding: 0.5em 0.8em; }
         /* ★右上フォロワー数表示用スタイル */
-        .follower-counter {
+        /* .follower-counter {
             position: absolute;
             top: 20px;
             right: 20px;
@@ -102,14 +103,33 @@ $is_game_over = check_game_over();
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             font-weight: bold;
             z-index: 1000;
-        }
+        } */
     </style>
 </head>
 <body>
 
-<div class="follower-counter text-dark">
+<!-- <div class="follower-counter text-dark">
     👥 フォロワー数: <span class="text-primary fs-5"><?php echo number_format($followers); ?></span> 人
+</div> -->
+<div id="miniScoreBox">
+    <div class="miniLabel">👥フォロワー数</div>
+    <div id="miniScoreValue"><?php echo number_format($followers); ?>人</div>
 </div>
+<!-- オーバーレイ -->
+<div id="scoreOverlay" class="hidden">
+
+    <!-- 増減の計算結果をここに入れる -->
+    <div id="diffText" class="plus">200</div>
+
+    <!-- 大きく画面に出る方のスコア,ここと右上の数値が変だとおかしくはならんけど違和感 -->
+        
+    <div class="scoreBox">
+        <div class="label">フォロワー数</div>
+        <div id="scoreValue"><?php echo number_format($followers); ?>人</div>
+    </div>
+
+</div>
+
 
 <div class="container py-5">
     <h1 class="text-center mb-5 fw-bold">答え合わせ</h1>
@@ -206,5 +226,6 @@ $is_game_over = check_game_over();
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="Score.js"></script>
 </body>
 </html>
