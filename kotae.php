@@ -46,23 +46,41 @@ foreach ($news_list as $news) {
 $roulette_result = null;
 $roulette_penalty = 0;
 
+// 連続炎上カウントの初期化（セッションになければ0にする）
+if (!isset($_SESSION['enjo_streak'])) {
+    $_SESSION['enjo_streak'] = 0;
+}
 
-//今のとこランダム
+$is_dobon = false; // ドボン（連続炎上による強制ゲームオーバー）フラグ
+
 if ($has_dropped) {
     // 1〜100のランダムな数字を生成（確率のパーセンテージ用）
     $dice = rand(1, 100);
-    if ($dice <= 60) {
+    if ($dice <= 50) {
         $roulette_result = 'chinka';     // 1〜60（60%の確率）
-    } elseif ($dice <= 90) {
+        $_SESSION['enjo_streak'] = 0;    // 鎮火したら連続カウントはリセット！
+    } elseif ($dice <= 40) {
         $roulette_result = 'enjo';       // 61〜90（30%の確率）
+        $_SESSION['enjo_streak']++;      // 炎上カウント+1
     } else {
         $roulette_result = 'dai_enjo';   // 91〜100（10%の確率）
+        $_SESSION['enjo_streak']++;      // 大炎上カウント+1
     }
+    
     // 設定された数値を適用
-    // $roulette_penalty = $enjo_penalties[$roulette_result];
-    // $_SESSION['followers'] -= $roulette_penalty;
     $roulette_penalty = $_SESSION['followers'] * $enjo_penalties[$roulette_result];
     $_SESSION['followers'] -= $roulette_penalty;
+
+    // ★2回連続で炎上または大炎上を引いた場合のドボン判定
+    if ($_SESSION['enjo_streak'] >= 2) {
+        $is_dobon = true;
+        $_SESSION['followers'] = 0; // フォロワーを0にして強制終了へ
+    }
+} else {
+    // このラウンドでフェイクを選んでいない（フォロワーが減っていない）なら
+    // 安全に切り抜けたということなので、連続炎上カウントはリセット
+    $_SESSION['enjo_streak'] = 0;
+
 }
 
 $_SESSION['followers'] += $hendou_followers; // フォロワー数の変動を適用
@@ -284,12 +302,21 @@ $is_game_over = check_game_over();
     <div class="text-center mt-5">
         <?php if ($is_game_over): ?>
             <div class="alert alert-danger d-inline-block p-4 shadow-sm">
-                <?php if ($followers <= 0): ?>
+                <?php if ($is_dobon): ?>
+                    <!-- ★連続炎上ドボンのメッセージ -->
+                    <h4 class="fw-bold mb-2">🚨 2回連続で炎上を発生させてしまいました！</h4>
+                    <p class="mb-3 text-danger-emphasis fw-bold">ネット上で弁明の余地のない致命的なレッテルを貼られ、アカウントが凍結しました...</p>
+                <?php elseif ($followers <= 0): ?>
                     <h4 class="fw-bold mb-3">💀 フォロワーが0人になりました。ゲームオーバーです...</h4>
                 <?php else: ?>
                     <h4 class="fw-bold mb-3">🎉 全<?php echo htmlspecialchars($rule['limit']); ?>問、すべて終了しました！</h4>
                     <h5>最終フォロワー数: <span class="text-primary fw-bold"><?php echo number_format($followers); ?></span> 人</h5>
                 <?php endif; ?>
+                
+                <?php
+                // ゲームオーバーなので、次のプレイのために連続カウントを綺麗にリセットしておく
+                $_SESSION['enjo_streak'] = 0;
+                ?>
                 <a href="Mondai_select.php" class="btn btn-danger btn-lg px-5 fw-bold mt-3">もう一度最初から遊ぶ</a>
             </div>
         <?php else: ?>
