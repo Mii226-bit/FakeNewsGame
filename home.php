@@ -2,7 +2,9 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/navbar.css" rel="stylesheet">
 
     <style>
         /* カード風デザイン */
@@ -10,8 +12,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 180px;
-            height: 220px;
+            width: 300px;
+            height: 400px;
             background-color: #cfe3f5;
             border: 3px solid #1e4f75;
             border-radius: 30px;
@@ -48,7 +50,7 @@
 <body>
 
 <?php include("navbar.php")?>
-
+<?php include("header.php")?>
 <h1 class="text-center mt-4">ゲーム名</h1>
 
 <div class="d-flex justify-content-center align-items-center mt-5 gap-4">

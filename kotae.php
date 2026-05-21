@@ -80,6 +80,7 @@ if ($has_dropped) {
     // このラウンドでフェイクを選んでいない（フォロワーが減っていない）なら
     // 安全に切り抜けたということなので、連続炎上カウントはリセット
     $_SESSION['enjo_streak'] = 0;
+
 }
 
 $_SESSION['followers'] += $hendou_followers; // フォロワー数の変動を適用
