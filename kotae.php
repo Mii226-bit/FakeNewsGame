@@ -20,22 +20,22 @@ $rule = get_game_rule();
 
 // ★【フォロワー数計算ロジック】
 if (!isset($_SESSION['followers'])) {
-    $_SESSION['followers'] = 5000; // 初期フォロワー数（ゲーム開始時に設定されているはずですが、念のため）
+    $_SESSION['followers'] = 10000; // 初期フォロワー数（ゲーム開始時に設定されているはずですが、念のため）
 }
 
 $has_dropped = false; // 今回のラウンドでフォロワーが減少したかどうかのフラグ
-// $hendou_followers = 0;
+$hendou_followers = 0;
 
 foreach ($news_list as $news) {
     if (in_array($news['no'], $selected_news)) {
         if ($news['singi']) {
             // 真（REAL）を選んでいたらフォロワー数上昇
-            $_SESSION['followers'] += (int)$news['score'];
-                        // $hendou_followers += (int)$news['score'];
+            // $_SESSION['followers'] += (int)$news['score'];
+            $hendou_followers += (int)$news['score'];
         } else {
             // 偽（FAKE）を選んでいたらフォロワー数下降
-            $_SESSION['followers'] -= (int)$news['score'] * 2; // ペナルティを倍にしてよりシビアに
-                        // $hendou_followers -= (int)$news['score'] * 1.5; // ペナルティを倍にしてよりシビアに
+            // $_SESSION['followers'] -= (int)$news['score'] * 2; // ペナルティを倍にしてよりシビアに
+            $hendou_followers -= (int)$news['score'] * 1.5; // ペナルティを倍にしてよりシビアに
             $has_dropped = true; // フォロワー減少を検知
         }
     }
@@ -49,17 +49,23 @@ $roulette_penalty = 0;
 
 //今のとこランダム
 if ($has_dropped) {
-    $types = ['chinka', 'enjo', 'dai_enjo'];
-    $roulette_result = $types[array_rand($types)]; // ランダムで1つ選択
-    
+    // 1〜100のランダムな数字を生成（確率のパーセンテージ用）
+    $dice = rand(1, 100);
+    if ($dice <= 60) {
+        $roulette_result = 'chinka';     // 1〜60（60%の確率）
+    } elseif ($dice <= 90) {
+        $roulette_result = 'enjo';       // 61〜90（30%の確率）
+    } else {
+        $roulette_result = 'dai_enjo';   // 91〜100（10%の確率）
+    }
     // 設定された数値を適用
-    $roulette_penalty = $enjo_penalties[$roulette_result];
+    // $roulette_penalty = $enjo_penalties[$roulette_result];
+    // $_SESSION['followers'] -= $roulette_penalty;
+    $roulette_penalty = $_SESSION['followers'] * $enjo_penalties[$roulette_result];
     $_SESSION['followers'] -= $roulette_penalty;
-        // $roulette_penalty = $_SESSION['followers'] * $enjo_penalties[$roulette_result];
-    // $_SESSION['followers'] -= $roulette_penalty;//
 }
 
-// $_SESSION['followers'] += $hendou_followers; // フォロワー数の変動を適用
+$_SESSION['followers'] += $hendou_followers; // フォロワー数の変動を適用
 // 計算完了後のフォロワー数
 $followers = $_SESSION['followers'];
 
@@ -160,7 +166,7 @@ $is_game_over = check_game_over();
 </div>
 
 <div class="container py-5">
-    <h1 class="text-center mb-5 fw-bold">答え合わせ</h1>
+    <h1 class="text-center mb-5 fw-bold">ファクトチェック</h1>
     
     <!-- ★ 炎上ルーレットの結果UIセクション -->
     <?php if ($roulette_result !== null): ?>
@@ -174,7 +180,7 @@ $is_game_over = check_game_over();
                         <h3 class="fw-bold text-info mb-2">炎上ルーレット：鎮火</h3>
                         <p class="text-secondary mb-3">デマの拡散に気づき、ボヤのうちに即座に消し止めた！<br>ネットの批判を最小限に抑え込みました。</p>
                         <div class="badge bg-info fs-6 px-3 py-2 rounded-pill">
-                            フォロワー減少: -<?php echo number_format($roulette_penalty); ?> 人
+                            フォロワー減少: <?php echo number_format($roulette_penalty); ?> 人
                         </div>
                     </div>
                     
@@ -185,7 +191,7 @@ $is_game_over = check_game_over();
                         <h3 class="fw-bold text-warning mb-2" style="color: #d39e00 !important;">炎上ルーレット：通常炎上</h3>
                         <p class="text-secondary mb-3">リプライ欄に批判が殺到中！<br>「ファクトチェックしろ」と叩かれ、アカウントの信用が削られています。</p>
                         <div class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill">
-                            フォロワー減少: -<?php echo number_format($roulette_penalty); ?> 人
+                            フォロワー減少: <?php echo number_format($roulette_penalty); ?> 人
                         </div>
                     </div>
                     
@@ -196,7 +202,7 @@ $is_game_over = check_game_over();
                         <h3 class="fw-bold text-danger mb-2">炎上ルーレット：大炎上</h3>
                         <p class="text-danger-emphasis mb-3 fw-bold">トレンド1位にランクイン！まとめサイトの餌食にされました。<br>世界中に醜態が拡散され、フォロー解除の嵐が止まりません！</p>
                         <div class="badge bg-danger fs-5 px-4 py-2 rounded-pill shadow-sm">
-                            フォロワー大激減: -<?php echo number_format($roulette_penalty); ?> 人
+                            フォロワー大激減: <?php echo number_format($roulette_penalty); ?> 人
                         </div>
                     </div>
                 <?php endif; ?>
