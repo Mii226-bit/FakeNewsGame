@@ -34,16 +34,16 @@
 
             <form action="faker.php" method="GET" class="container-box">
                 
-                <input type="radio" class="btn-check" name="question_limit" id="q3" value="3">
+                <input type="radio" class="btn-check" name="mondaisuu" id="q3" value="3">
                 <label class="btn btn-outline-primary fs-5" for="q3">3問</label>
 
-                <input type="radio" class="btn-check" name="question_limit" id="q5" value="5" checked>
+                <input type="radio" class="btn-check" name="mondaisuu" id="q5" value="5" checked>
                 <label class="btn btn-outline-primary fs-5" for="q5">5問</label>
 
-                <input type="radio" class="btn-check" name="question_limit" id="q7" value="7">
+                <input type="radio" class="btn-check" name="mondaisuu" id="q7" value="7">
                 <label class="btn btn-outline-primary fs-5" for="q7">7問</label>
 
-                <input type="radio" class="btn-check" name="question_limit" id="q8" value="endless">
+                <input type="radio" class="btn-check" name="mondaisuu" id="q8" value="endless">
                 <label class="btn btn-outline-primary fs-5" for="q8">エンドレス</label>
 
                 <button type="submit" class="btn btn-success btn-lg mt-4 px-5 shadow-sm fw-bold">
