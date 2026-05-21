@@ -17,7 +17,7 @@ function init_game($limit) {
 // ゲームルールを取得する関数
 function get_game_rule() {
     if (!isset($_SESSION['game_rule'])) {
-        init_game('3');
+        init_game('5');
     }
     return $_SESSION['game_rule'];
 }

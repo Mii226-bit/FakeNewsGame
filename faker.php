@@ -6,25 +6,24 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'db_config.php';
 require_once 'game_manager.php';
 
-
-if (isset($_GET['question_limit'])) {
+if (isset($_GET['mondaisuu'])) {
     // ラジオボタンで選ばれた値（3, 5, 7, endless）を取得して初期化
-    $limit = $_GET['question_limit'];
+    $limit = $_GET['mondaisuu'];
     init_game($limit);
 } elseif (!isset($_SESSION['game_rule']) || !isset($_SESSION['followers'])) {
-    // 直接アクセスされた場合の安全装置（デフォルト3問）
-    init_game('3');
+    // 直接アクセスされた場合の安全装置（デフォルト5問）
+    init_game('5');
 }
 
+    //ゲームルールとフォロワー数をセッションから取得
 $rule = get_game_rule();
-// 現在のフォロワー数を取得
 $followers = $_SESSION['followers'];
 
 $sql = "SELECT * FROM news ORDER BY RAND() LIMIT 6";
 $stmt = $pdo->query($sql);
 $news_list = $stmt->fetchAll();
 
-$_SESSION['current_hand'] = $news_list;
+$_SESSION['six_news'] = $news_list;
 ?>
 <!DOCTYPE html>
 <html lang="ja">

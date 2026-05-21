@@ -9,30 +9,33 @@ require_once 'game_manager.php';
 // ★ 炎上ルーレットの設定（後から調整可能）
 // ==========================================
 $enjo_penalties = [
-    'chinka'    => 1000,  // 鎮火: 固定でマイナスするフォロワー数
-    'enjo'      => 3000,  // 炎上: 固定でマイナスするフォロワー数
-    'dai_enjo'  => 8000   // 大炎上: 固定でマイナスするフォロワー数
+    'chinka'    => 0,  // 鎮火: 固定でマイナスするフォロワー数
+    'enjo'      => 0.2,  // 炎上: 固定でマイナスするフォロワー数
+    'dai_enjo'  => 0.5  // 大炎上: 固定でマイナスするフォロワー数
 ];
 
-$news_list = isset($_SESSION['current_hand']) ? $_SESSION['current_hand'] : [];
+$news_list = isset($_SESSION['six_news']) ? $_SESSION['six_news'] : [];
 $selected_news = isset($_POST['selected_news']) ? $_POST['selected_news'] : [];
 $rule = get_game_rule();
 
 // ★【フォロワー数計算ロジック】
 if (!isset($_SESSION['followers'])) {
-    $_SESSION['followers'] = 10000;
+    $_SESSION['followers'] = 5000; // 初期フォロワー数（ゲーム開始時に設定されているはずですが、念のため）
 }
 
 $has_dropped = false; // 今回のラウンドでフォロワーが減少したかどうかのフラグ
+// $hendou_followers = 0;
 
 foreach ($news_list as $news) {
     if (in_array($news['no'], $selected_news)) {
         if ($news['singi']) {
             // 真（REAL）を選んでいたらフォロワー数上昇
             $_SESSION['followers'] += (int)$news['score'];
+                        // $hendou_followers += (int)$news['score'];
         } else {
             // 偽（FAKE）を選んでいたらフォロワー数下降
             $_SESSION['followers'] -= (int)$news['score'] * 2; // ペナルティを倍にしてよりシビアに
+                        // $hendou_followers -= (int)$news['score'] * 1.5; // ペナルティを倍にしてよりシビアに
             $has_dropped = true; // フォロワー減少を検知
         }
     }
@@ -43,6 +46,8 @@ foreach ($news_list as $news) {
 $roulette_result = null;
 $roulette_penalty = 0;
 
+
+//今のとこランダム
 if ($has_dropped) {
     $types = ['chinka', 'enjo', 'dai_enjo'];
     $roulette_result = $types[array_rand($types)]; // ランダムで1つ選択
@@ -50,8 +55,11 @@ if ($has_dropped) {
     // 設定された数値を適用
     $roulette_penalty = $enjo_penalties[$roulette_result];
     $_SESSION['followers'] -= $roulette_penalty;
+        // $roulette_penalty = $_SESSION['followers'] * $enjo_penalties[$roulette_result];
+    // $_SESSION['followers'] -= $roulette_penalty;//
 }
 
+// $_SESSION['followers'] += $hendou_followers; // フォロワー数の変動を適用
 // 計算完了後のフォロワー数
 $followers = $_SESSION['followers'];
 
