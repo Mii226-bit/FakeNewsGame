@@ -1,0 +1,38 @@
+body {
+            background-color: #e9f1f7;
+        }
+        .news-card {
+            /* 白黒選択したい */
+            background-color: #000 !important;
+            color: #fff;
+            /* background-color: #fff !important;
+            color: #000; */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .news-card:hover {
+            filter: brightness(1.2);
+        }
+
+        /* ★選択された時の赤いボーダー */
+        .selected-card {
+            border: 10px solid #e05c23 !important;
+            /* box-shadow: 0 0 15px rgba(255, 0, 0, 0.6) !important; */
+        }
+                .news-card:hover {
+            transform: scale(1.03); /* ホバー時に少し大きく */
+            filter: brightness(1.2);
+        }
+
+                    .user-icon {
+                        width: 45px;
+                        height: 45px;
+                        font-weight: bold;
+                        font-size: 1.2rem;
+                    }
+                    
+        .score-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }

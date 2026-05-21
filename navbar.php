@@ -1,7 +1,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">  <
-div class="container-fluid">
+<link href="css/navbar.css" rel="stylesheet">
+<nav class="navbar navbar-expand-lg ">  
+  <div class="container-fluid">
 
 
     <a class="navbar-brand" href="home.php">MySite</a>
@@ -22,7 +22,7 @@ div class="container-fluid">
 
         <li class="nav-item">
           <a class="nav-link" href="review.php">📒見直し</a>
-
+</li>
       </ul>
     </div>
 
