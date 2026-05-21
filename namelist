@@ -20,3 +20,4 @@ CREATE TABLE news (
     kaisetu_text VARCHAR(255) NOT NULL,          -- 一言解説（最大255文字程度）
     tuinusi VARCHAR(50)            -- ツイート主（作成者や回答者など）
 );
+
