@@ -1,0 +1,33 @@
+body {
+            background-color: #e9f1f7; /* 背景色を少し青っぽく  削除しないとbase.cssと競合する？*/
+        }
+        .news-card {
+            /* 白黒選択したい */
+            background-color: #000 !important;
+            color: #fff;
+            /* background-color: #fff !important;
+            color: #000; */
+            border-width: 3px !important;
+            cursor: pointer;
+            transition: transform 0.2s;/*ふわっとするやつ*/
+            text-decoration: none;
+        }
+        .selected-card {
+            border-color: #ff0000 !important; /* ユーザー設定色（赤） */
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important; /* 外光エフェクト */
+            transform: scale(1.05); /* 少し強調 */
+        }
+        .news-card:hover {
+            transform: scale(1.03); /* ホバー時に少し大きく */
+            filter: brightness(1.2);
+        }
+        .user-icon {
+            width: 45px;
+            height: 45px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .score-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
